@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "vault.fullname" . }}-config
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    version: {{ .Chart.AppVersion }}
+    heritage: {{ .Release.Service }}
+data:
+  vault.json: -|
+    {
+      "backend": {
+        "file": {
+          "path": "/vault/file"
+        }
+      },
+      "default_lease": "168h",
+      "max_lease_ttl": "720h"
+    }

@@ -1,0 +1,25 @@
+{{- if and .Values.storage.enabled (not .Values.storage.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "jenkins.fullname" . }}-claim
+  labels:
+    app: {{ template "jenkins.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name | quote }}
+    version: {{ .Chart.AppVersion | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  accessModes:
+    - {{ .Values.storage.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size | quote }}
+{{-   if .Values.storage.storageClass }}
+{{-     if (eq "-" .Values.storage.storageClass) }}
+  storageClassName: ""
+{{-     else }}
+  storageClassName: {{ .Values.storage.storageClass | quote }}
+{{-     end }}
+{{-   end }}
+{{- end }}
