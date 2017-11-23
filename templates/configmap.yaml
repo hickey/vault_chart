@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "vault.fullname" . }}-config
+  name: {{ template "fullname" . }}-config
   labels:
     app: {{ template "name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -9,7 +9,7 @@ metadata:
     version: {{ .Chart.AppVersion }}
     heritage: {{ .Release.Service }}
 data:
-  vault.json: -|
+  vault.json: |-
     {
       "backend": {
         "file": {
