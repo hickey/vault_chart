@@ -8,7 +8,7 @@ image:
   pullPolicy: IfNotPresent
 service:
   name: vault
-  type: NodeIp
+  type: NodePort
   externalPort: 8200
   internalPort: 8200
 ingress:
