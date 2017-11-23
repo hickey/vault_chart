@@ -6,6 +6,36 @@ image:
   repository: vault
   tag: latest
   pullPolicy: IfNotPresent
+
+config:
+  storage:
+    backend: file
+    path: /vault/file
+    ## etcd
+    # backend: etcd
+    # address: http://localhost:2379
+    # api_version: v3
+    ## consul
+    # backend: consul
+    # address: 127.0.0.1:8500
+    # path: vault
+    ## couchdb
+    # backend: couchdb
+    # endpoint: https://localhost:5984/database
+    # username: admin
+    # password: admin
+    ## cockroachdb
+    # backend: cockroachdb
+    # connection: postgres://user_name:password@localhost:5432/vault
+  tls:
+    key_file:
+    cert_file:
+    min_version:
+    cipher_suite:
+    client_ca_file:
+
+
+
 service:
   name: vault
   type: NodePort

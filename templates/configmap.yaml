@@ -11,11 +11,58 @@ metadata:
 data:
   vault.json: |-
     {
-      "backend": {
+      "storage": {
+{{- if eq .Values.config.storage.backend "file" }}
         "file": {
-          "path": "/vault/file"
+          "path": {{ .Values.config.storage.path | quote }}
         }
+{{- else if eq .Values.config.storage.backend "etcd" }}
+        "etcd": {
+          "address": {{ .Values.config.storage.address | quote }},
+          "etcd_api": {{ .Values.config.storage.api_version | quote }}
+        }
+{{- else if eq .Values.config.storage.backend "consul" }}
+        "consul": {
+          "address": {{ .Values.config.storage.address | quote }},
+          "path": {{ .Values.config.storage.path | quote }},
+        }
+{{- else if eq .Values.config.storage.backend "couchdb" }}
+        "couchdb": {
+          "endpoint": {{ .Values.config.storage.endpoint | quote }},
+          "username": {{ .Values.config.storage.username | quote }},
+          "password": {{ .Values.config.storage.password | quote }}
+        }
+{{- else if eq .Values.config.storage.backend "cockroachdb" }}
+        "cockroachdb": {
+          "connection_url": {{ .Values.config.storage.connection | quote }}
+        }
+{{- end }}
       },
-      "default_lease": "168h",
-      "max_lease_ttl": "720h"
+      "listener": {
+        "tcp": {
+{{- if .Values.config.tls.key_file }}
+          "tls_disable": 0,
+          "tls_key_file": {{ .Values.config.tls.key_file | quote }},
+          "tls_cert_file": {{ .Values.config.tls.cert_file | quote }},
+{{-   if .Values.config.tls.min_version }}
+          "tls_min_version": {{ .Values.config.tls.min_version | quote }},
+{{-   else }}
+          "tls_min_version": "tls12",
+{{-   end }}
+{{-   if .Values.config.tls.cipher_suite }}
+          "tls_cipher_suite": {{ .Values.config.tls.cipher_suite }},
+{{-   else }}
+          "tls_cipher_suite": "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+{{-   end }}
+{{-   if .Values.config.tls.client_ca_file }}
+          "tls_client_ca_file": {{ .Values.config.tls.client_ca_file | quote }},
+          "tls_disable_client_certs": 0
+{{-   else }}
+          "tls_disable_client_certs": 1
+{{-   end }}
+{{- else }}
+          "tls_disable": 1
+{{- end }}
+        }
+      }
     }
