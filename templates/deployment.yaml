@@ -18,6 +18,16 @@ spec:
         version: {{ .Chart.AppVersion }}
         chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     spec:
+      initContainers:
+        - name: write-config
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          args: ["/bin/cp", "-rp", "/data/config2/*", "/data/config1/"]
+          volumeMounts:
+            - name: vault-config
+              mountPath: /data/config1
+            - name: vault-init-config
+              mountPath: /data/config2
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -50,6 +60,8 @@ spec:
     {{- end }}
       volumes:
         - name: vault-config
+          emptyDir: {}
+        - name: vault-init-config
           configMap:
             name: {{ template "fullname" . }}-config
         {{- if .Values.storage.enabled }}
